@@ -2,24 +2,21 @@ from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 
 import numpy as np
 
-
 def run_averages(file_input='brain_sample.csv', file_output='brain_average.csv'):
     """
-    Calculates the average through the coronal planes
-    The input file should has as many columns as coronal planes
-    The rows are intersections of the sagittal/horizontal planes
-
-    The result is the average for each sagittal/horizontal plane (rows)
+    Calculates the average through the coronal planes.
+    Each column corresponds to a coronal plane;
+    each row corresponds to a sagittal/horizontal intersection.
     """
-    # Open the file to analyse
-    planes = np.loadtxt(file_input, dtype=int,  delimiter=',')
+    # Read input CSV
+    with open(file_input, 'r') as myfile:
+        planes = [list(map(int, line.strip().split(','))) for line in myfile]
 
-    # Calculates the averages through the sagittal/horizontal planes
-    # and makes it as a row vector
-    averages = planes.mean(axis=0)[np.newaxis, :]
+    planes = np.array(planes)
+    averages = np.mean(planes, axis=0)
 
-    # write it out on my file
-    np.savetxt(file_output, averages, fmt='%.1f', delimiter=',')
+    # Save output correctly (single CSV row)
+    np.savetxt(file_output, [averages], fmt='%.2f', delimiter=',')
 
 
 if __name__ == "__main__":
